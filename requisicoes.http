@@ -1,0 +1,17 @@
+### 1. Testar se o Servidor está vivo
+GET http://127.0.0.1:3333/health
+
+###
+
+### 2. Criar o Primeiro Vídeo (O Momento da Glória!)
+POST http://127.0.0.1:3333/videos
+Content-Type: application/json
+
+{
+  "titulo": "Psicologia da Geração X: O Mistério"
+}
+
+###
+
+### 3. Listar os Vídeos do Banco
+GET http://127.0.0.1:3333/videos

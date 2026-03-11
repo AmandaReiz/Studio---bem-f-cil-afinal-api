@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-br" data-theme="dark">
+<head>
+    <link rel="icon" type="image/png" href="../../logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>É bem fácil, afinal | Studio Pro</title>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="nav-logo" onclick="carregarVideos()">
+                <img src="../../logo.png" alt="" class="logo-circle">
+                <span>É bem fácil, afinal</span>
+            </div>
+            
+            <div class="nav-filters">
+                <button onclick="carregarVideos()" class="filter-btn">Todos</button>
+                <button onclick="filtrarStatus('Ideia')" class="filter-btn">🔴 Ideia</button>
+                <button onclick="filtrarStatus('Roteirizando')" class="filter-btn">🟡 Editando</button>
+                <button onclick="filtrarStatus('Postado')" class="filter-btn">🟢 Postado</button>
+                
+                <span style="border-left: 1px solid var(--border); margin: 0 5px;"></span>
+
+                <button onclick="filtrarDificuldade('Rápido')" class="filter-btn">⚡ Rápido</button>
+                <button onclick="filtrarDificuldade('Médio')" class="filter-btn">🛠️ Médio</button>
+                <button onclick="filtrarDificuldade('Complexo')" class="filter-btn">🧠 Complexo</button>
+            </div>
+
+            <div class="nav-right">
+                <div class="menu-container">
+                    <button class="menu-dots-btn" onclick="toggleMenu()">⋮</button>
+                    <div id="dropdown-menu" class="dropdown-content">
+                        <a href="#" onclick="abrirMetas(); toggleMenu()">Metas</a>
+                        <a href="#" onclick="carregarSucessos(); toggleMenu()">Favoritos</a>
+                        <a href="https://studio.youtube.com" target="_blank">Analytics</a>
+                    </div>
+                </div>
+                <button onclick="toggleTheme()" class="btn-theme-toggle">🌓</button>
+                <span id="video-count" class="video-badge">0 vídeos</span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Adicionar Vídeo</h2>
+                <p>Planeje seu conteúdo</p>
+            </div>
+            
+            <div class="form-group">
+                <input type="text" id="titulo" placeholder="Título do vídeo">
+                <input type="text" id="tema" placeholder="Tema">
+                <input type="text" id="link" placeholder="Link do vídeo">
+                
+                <label class="file-label" id="label-thumb">
+                    <span id="text-thumb">📁 Upload Thumbnail</span>
+                    <input type="file" id="thumbnail-pc" accept="image/*" onchange="converterThumb(this)">
+                </label>
+                <input type="hidden" id="thumbnail-b64">
+
+                <div class="select-group" style="display: flex; gap: 10px; margin-bottom: 12px;">
+                    <select id="status-default" class="input-select">
+                        <option value="Ideia">🔴 Ideia</option>
+                        <option value="Roteirizando">🟡 Editando</option>
+                        <option value="Postado">🟢 Postado</option>
+                    </select>
+                    <select id="dificuldade-default" class="input-select">
+                        <option value="Rápido">⚡ Rápido</option>
+                        <option value="Médio" selected>🛠️ Médio</option>
+                        <option value="Complexo">🧠 Complexo</option>
+                    </select>
+                </div>
+
+                <textarea id="roteiro" placeholder="Escreva o roteiro inicial aqui..."></textarea>
+                <button onclick="salvarVideo()" class="btn-save">Salvar Planejamento</button>
+                
+                <button onclick="exportarBackup()" class="btn-backup">📤 Exportar JSON</button>
+                <button onclick="document.getElementById('importInput').click()" class="btn-import">📥 Importar JSON</button>
+                <input type="file" id="importInput" style="display: none" onchange="importarJSON(event)">
+            </div>
+
+            <div class="channel-summary">
+                <div class="summary-header"><h3>Resumo do Canal</h3></div>
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <span class="stat-label">CTR MÉDIO</span>
+                        <span id="avg-ctr" class="stat-value ctr-color">0%</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">AVD MÉDIO</span>
+                        <span id="avg-retention" class="stat-value avd-color">0%</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div id="video-grid" class="grid"></div>
+        </main>
+    </div>
+
+    <div id="overlay-roteiro" class="overlay" onclick="fecharRoteiro()">
+        <div class="roteiro-modal" onclick="event.stopPropagation()">
+            <h2 id="roteiro-titulo"></h2>
+            <textarea id="roteiro-editavel" class="roteiro-textarea" placeholder="Edite seu roteiro aqui..."></textarea>
+            <div class="modal-footer">
+                <button onclick="salvarAlteracaoRoteiro()" class="btn-save">💾 Salvar Alterações</button>
+                <button onclick="fecharRoteiro()" class="btn-cancel">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="overlay-metas" class="overlay" onclick="fecharMetas()">
+        <div class="metas-modal" onclick="event.stopPropagation()">
+            <header class="metas-header">
+                <h2>📈 Metas de Performance</h2>
+                <p>Ajuste seus números e objetivos conforme o canal cresce</p>
+            </header>
+
+            <div class="metas-grid"></div>
+
+            <div class="metas-form">
+                <div class="form-section">
+                    <h3>📍 Progresso Atual</h3>
+                    <div class="form-row">
+                        <input type="number" id="m-views" placeholder="Views Atuais">
+                        <input type="number" id="m-insc" placeholder="Inscritos Atuais">
+                        <input type="number" id="m-rec" placeholder="Receita Atual">
+                    </div>
+                </div>
+
+                <div class="form-section" style="margin-top: 20px;">
+                    <h3>🎯 Novos Objetivos</h3>
+                    <div class="form-row">
+                        <input type="number" id="mt-views" placeholder="Meta de Views">
+                        <input type="number" id="mt-insc" placeholder="Meta de Inscritos">
+                        <input type="number" id="mt-rec" placeholder="Meta de Receita">
+                    </div>
+                </div>
+
+                <button onclick="salvarMetas()" class="btn-save" style="margin-top: 25px;">💾 Atualizar Tudo</button>
+            </div>
+            
+            <div style="margin-top: 20px; text-align: right;">
+                <button onclick="fecharMetas()" class="btn-cancel">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,766 @@
+/* VARIÁVEIS DE TEMA (Apple Design System) */
+:root {
+    --bg: #000;
+    --text: #ffffff;
+    --card: rgba(28, 28, 30, 0.6);
+    --border: rgba(255, 255, 255, 0.1);
+    --accent: #ff9f1c;
+    --sidebar-bg: #000;
+    --input-bg: #1c1c1e;
+    --navbar-bg: rgba(0, 0, 0, 0.85);
+}
+
+/* TEMA CLARO (LIGHT MODE) */
+[data-theme="light"] {
+    --bg: #f5f5f7;
+    --text: #1d1d1f;
+    --card: rgba(255, 255, 255, 0.8);
+    --border: rgba(0, 0, 0, 0.1);
+    --accent: #f56300;
+    --sidebar-bg: #ffffff;
+    --input-bg: #f2f2f7;
+    --navbar-bg: rgba(255, 255, 255, 0.85);
+}
+
+/* Container do Menu */
+.menu-container {
+    position: relative;
+    display: inline-block;
+}
+
+/* Botão de Três Pontinhos */
+.menu-dots-btn {
+    background: none;
+    border: none;
+    color: var(--text);
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0 10px;
+    transition: 0.3s;
+}
+
+.menu-dots-btn:hover { opacity: 0.7; }
+
+/* O Menu que aparece (Dropdown) */
+.dropdown-content {
+    display: none; /* Escondido por padrão */
+    position: absolute;
+    right: 0;
+    top: 40px;
+    background: var(--card-bg); /* Usa a cor do seu card */
+    backdrop-filter: blur(10px);
+    min-width: 160px;
+    box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+    z-index: 1000;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    animation: fadeIn 0.2s ease;
+}
+
+/* Links dentro do menu */
+.dropdown-content a {
+    color: var(--text);
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    font-size: 14px;
+    transition: 0.2s;
+}
+
+.dropdown-content a:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Mostrar o menu quando a classe "show" for adicionada via JS */
+.dropdown-content.show {
+    display: block;
+}
+
+/* Animação suave */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* No modo Light, ajusta o hover do menu */
+[data-theme="light"] .dropdown-content a:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+/* CONFIGURAÇÃO BASE */
+body { 
+    background: var(--bg);
+    color: var(--text); 
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    margin: 0; height: 100vh; overflow: hidden;
+    transition: background 0.3s, color 0.3s;
+}
+
+/* NAVBAR: Estrutura Completa */
+.navbar {
+    width: 100%;
+    background: var(--navbar-bg);
+    backdrop-filter: blur(20px);
+    border-bottom: 0.5px solid var(--border);
+    position: sticky; 
+    top: 0; 
+    z-index: 1000;
+}
+
+.nav-content { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 0 40px; 
+    height: 70px; 
+}
+
+/* LOGO: Trazendo de volta a formatação que sumiu */
+.nav-logo { 
+    display: flex; 
+    align-items: center; 
+    gap: 15px; 
+    cursor: pointer; 
+    font-weight: bold; 
+    font-size: 18px; 
+    color: var(--text); /* Garante que o texto acompanhe o tema */
+}
+
+/* CONTAINER PRINCIPAL DO RESUMO */
+.channel-summary {
+    background: rgba(255, 255, 255, 0.03); /* Efeito vidro */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 20px;
+    margin-top: 25px;
+    backdrop-filter: blur(10px);
+}
+
+.summary-header h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0 0 15px 0;
+    letter-spacing: 0.5px;
+    opacity: 0.8;
+}
+
+/* GRID DE ESTATÍSTICAS */
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.stat-box {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 15px 10px;
+    border-radius: 15px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: transform 0.3s ease;
+}
+
+.stat-box:hover {
+    transform: translateY(-3px);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.stat-label {
+    display: block;
+    font-size: 10px;
+    color: #8e8e93; /* Cinza Apple */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+
+.stat-value {
+    font-size: 20px;
+    font-weight: 800;
+    font-family: 'Inter', Helvetica, sans-serif;
+}
+
+/* CORES DAS MÉTRICAS */
+.ctr-color {
+    color: #ff9f0a; /* Laranja vibrante */
+    text-shadow: 0 0 15px rgba(255, 159, 10, 0.3);
+}
+
+.avd-color {
+    color: #32d74b; /* Verde vibrante */
+    text-shadow: 0 0 15px rgba(50, 215, 75, 0.3);
+}
+
+/* AJUSTE PARA MODO CLARO */
+[data-theme="light"] .channel-summary {
+    background: rgba(0, 0, 0, 0.02);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .stat-box {
+    background: #ffffff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+/* AJUSTES PARA TELAS PEQUENAS (MOBILE) */
+@media (max-width: 768px) {
+    .nav-content {
+        flex-direction: column; /* Empilha logo e filtros */
+        height: auto;
+        padding: 15px;
+        gap: 15px;
+    }
+
+    .nav-filters {
+        width: 100%;
+        overflow-x: auto; /* Permite rolar os filtros de lado se não couberem */
+        display: flex;
+        padding-bottom: 5px;
+        justify-content: flex-start;
+        -webkit-overflow-scrolling: touch; /* Roteagem suave no iPhone */
+    }
+
+    .nav-filters::-webkit-scrollbar {
+        display: none; /* Esconde a barra de rolagem chata */
+    }
+
+    .filter-btn {
+        flex-shrink: 0; /* Impede os botões de esmagarem o texto */
+        white-space: nowrap; /* Garante que o texto não quebre linha */
+    }
+
+    .app-container {
+        flex-direction: column; /* Sidebar vai para cima dos cards */
+        height: auto;
+        overflow: visible;
+    }
+
+    .sidebar {
+        width: 100%; /* Sidebar ocupa a largura toda no celular */
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .main-content {
+        padding: 20px;
+    }
+
+    .grid {
+        grid-template-columns: 1fr; /* Um card por linha no celular */
+    }
+}
+
+.logo-circle { 
+    width: 40px; 
+    height: 40px; 
+    border-radius: 50%; /* Faz o círculo */
+    object-fit: cover; 
+    border: 1.5px solid #444; 
+}
+
+/* LINKS E BOTÃO DE TEMA: Lado a lado */
+.nav-right { 
+    display: flex; 
+    align-items: center; 
+    gap: 30px; 
+}
+
+.nav-links { 
+    display: flex; 
+    align-items: center; 
+    gap: 20px; 
+}
+
+.nav-links a { 
+    color: #8e8e93; 
+    text-decoration: none; 
+    font-size: 14px; 
+    transition: 0.3s; 
+}
+
+.nav-links a:hover { 
+    color: var(--text); 
+}
+
+/* Botão de Tema (🌓) sutil ao lado do Analytics */
+.btn-theme-toggle {
+    background: none; 
+    border: none; 
+    font-size: 18px; 
+    cursor: pointer; 
+    transition: 0.2s; 
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+
+.btn-theme-toggle:hover { 
+    transform: scale(1.2); 
+}
+
+.video-badge { 
+    background: var(--border); 
+    padding: 4px 12px; 
+    border-radius: 20px; 
+    font-size: 12px; 
+    color: #8e8e93; 
+}
+/* APP LAYOUT */
+.app-container { display: flex; height: calc(100vh - 70px); }
+
+/* SIDEBAR: Branca no Light, Glass no Dark */
+.sidebar { 
+    width: 380px; 
+    padding: 30px; 
+    border-right: 0.5px solid var(--border); 
+    background: var(--sidebar-bg) !important; /* Respeita a variável para ficar branca no light */
+    backdrop-filter: blur(20px); 
+    -webkit-backdrop-filter: blur(20px);
+    overflow-y: auto; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 20px;
+    transition: background 0.3s;
+}
+
+/* Inputs da Sidebar se ajustam ao fundo */
+.input-select {
+    width: 100%; 
+    background: var(--input-bg); 
+    border: 1px solid var(--border);
+    border-radius: 12px; 
+    padding: 10px; 
+    color: var(--text); 
+    cursor: pointer; 
+    outline: none;
+}
+
+.form-group input, .form-group textarea {
+    width: 100%; 
+    background: var(--input-bg); 
+    border: 1px solid var(--border); 
+    border-radius: 12px;
+    padding: 14px; 
+    color: var(--text); 
+    margin-bottom: 12px; 
+    box-sizing: border-box; 
+    outline: none;
+}
+
+/* BOTÕES ESPECIAIS */
+.btn-save { 
+    background: var(--text); 
+    color: var(--bg); 
+    border: none; 
+    padding: 14px; 
+    border-radius: 25px; 
+    width: 100%; 
+    font-weight: bold; 
+    cursor: pointer; 
+    transition: 0.2s;
+}
+
+.btn-backup, .btn-import {
+    border: none; 
+    padding: 12px; 
+    border-radius: 25px;
+    width: 100%; 
+    font-weight: bold; 
+    cursor: pointer; 
+    margin-top: 5px;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-backup {
+    background: #32d74b; 
+    color: #000; 
+    box-shadow: 0 4px 14px rgba(50, 215, 75, 0.2); 
+}
+
+.btn-import {
+    background: #007aff; 
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(0, 122, 255, 0.2);
+}
+
+.btn-backup:hover, .btn-import:hover { 
+    transform: translateY(-2px); 
+    filter: brightness(1.1);
+}
+
+/* GRID & CONTENT */
+.main-content { 
+    flex: 1; 
+    padding: 40px; 
+    overflow-y: auto; 
+    background: var(--bg); /* Fica off-white no Light Mode */
+    transition: background 0.3s;
+}
+
+.grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); 
+    gap: 30px; 
+}
+
+/* Estilização do Campo de Texto no Modal */
+.roteiro-textarea {
+    width: 100%;
+    height: 350px; /* Altura fixa para forçar o scroll se crescer */
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text);
+    padding: 15px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    resize: none; /* Impede o usuário de deformar o modal */
+    outline: none;
+    margin-top: 15px;
+}
+
+/* Barra de rolagem estilizada (fina) */
+.roteiro-textarea::-webkit-scrollbar {
+    width: 6px;
+}
+.roteiro-textarea::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 10px;
+}
+
+.modal-footer {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.btn-cancel {
+    background: rgba(255,255,255,0.1);
+    color: var(--text);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+/* CARD: SEMPRE ESCURO E CHIC (Independente do tema) */
+.card {
+    background: rgba(20, 17, 17, 0.85) !important; /* Forçado escuro para contraste */
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 24px;
+    padding: 25px;
+    color: #ffffff !important;
+    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    background: rgba(0, 0, 0, 0.95) !important;
+    border-color: var(--accent) !important;
+    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.6);
+}
+
+.card h3 { color: #fff !important; margin: 0; }
+
+/* SELECTS DENTRO DO CARD */
+.tag-select-container select {
+    background: rgba(255, 255, 255, 0.1); 
+    border: none; 
+    color: #fff; /* Sempre branco dentro do card */
+    padding: 4px 8px; 
+    border-radius: 8px; 
+    font-size: 11px; 
+    font-weight: 600; 
+    cursor: pointer;
+}
+
+/* MÉTRICAS (Badges neon) */
+.metric-badge { padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: bold; margin-right: 6px; }
+.m-low { background: rgba(255, 69, 58, 0.2); color: #ff453a; }
+.m-high { background: rgba(48, 209, 88, 0.2); color: #30d158; }
+
+/* EDIÇÃO DE MÉTRICAS NO CARD */
+.metrics-edit { 
+    display: flex; 
+    gap: 5px; 
+    margin-top: 20px; 
+    background: rgba(255, 255, 255, 0.05); 
+    padding: 8px; 
+    border-radius: 12px; 
+}
+
+/* EDIÇÃO DE MÉTRICAS NO CARD */
+.metrics-edit { 
+    display: flex; 
+    gap: 5px; 
+    margin-top: 20px; 
+    background: rgba(255, 255, 255, 0.05); 
+    padding: 8px; 
+    border-radius: 12px; 
+}
+
+.metrics-edit input { 
+    width: 100%; 
+    background: rgba(255, 255, 255, 0.1); /* Fundo sutil no modo escuro */
+    border: 1px solid rgba(255, 255, 255, 0.1); 
+    border-radius: 6px; 
+    padding: 6px; 
+    font-size: 10px; 
+    text-align: center;
+    outline: none;
+    color: #ffffff; /* Texto branco no modo escuro */
+    transition: all 0.3s ease;
+}
+
+/* AJUSTE ESPECÍFICO: Modo Claro (Light Mode) */
+[data-theme="light"] .metrics-edit input {
+    background: #ffffff !important; /* Box fica branco total */
+    color: #000000 !important;      /* Texto fica preto total */
+    border: 1px solid #d1d1d6;      /* Bordinha cinza clara estilo Apple */
+}
+
+/* Ajuste para o botão OK dentro da edição de métricas não sumir no claro */
+[data-theme="light"] .metrics-edit button {
+    background: var(--accent);
+    color: #000;
+}
+
+/* COR NO MODO CLARO (Apenas para o texto digitado no card) */
+[data-theme="light"] .metrics-edit input {
+    color: #000000 !important; /* Fica preto para você enxergar no fundo claro */
+    border-color: rgba(0, 0, 0, 0.2);
+}
+
+/* Placeholder (aquele texto cinza que fica antes de você digitar) */
+.metrics-edit input::placeholder {
+    color: rgba(150, 150, 150, 0.7);
+}
+
+/* Filtros na Navbar com Responsividade (Nome sumindo e Botões rolando) */
+.nav-filters {
+    display: flex;
+    gap: 10px;
+    transition: all 0.3s ease;
+}
+
+.filter-btn {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: 0.3s;
+    white-space: nowrap;
+}
+
+.filter-btn:hover { background: var(--accent); color: #000; }
+
+/* MEDIA QUERY: Para a tela apertadinha */
+@media (max-width: 768px) {
+    .nav-logo span {
+        display: none; /* Nome some para dar espaço */
+    }
+
+    .nav-filters {
+        gap: 5px;
+        overflow-x: auto; /* Botões rolam para o lado */
+        -webkit-overflow-scrolling: touch;
+        padding: 5px 0;
+    }
+
+    .nav-filters::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+[data-theme="light"] .roteiro-modal {
+    background: #ffffff !important;
+    border: 1px solid #d1d1d6;
+}
+
+[data-theme="light"] .roteiro-textarea {
+    background: #f2f2f7 !important;
+    color: #000000 !important;
+    border: 1px solid #d1d1d6;
+}
+
+[data-theme="light"] #roteiro-titulo {
+    color: #000000;
+}
+
+/* Estilo do Card com Thumbnail */
+.card-thumb-img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 24px 24px 0 0;
+    border-bottom: 1px solid var(--border);
+}
+
+/* Label de Upload Estilizada */
+.file-label {
+    display: block;
+    background: var(--input-bg);
+    border: 1px dashed var(--border);
+    padding: 12px;
+    border-radius: 12px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 13px;
+    margin-bottom: 12px;
+    color: #8e8e93;
+}
+.file-label input { display: none; }
+.file-label:hover { border-color: var(--accent); color: var(--text); }
+
+.btn-delete-card {
+    background: none; border: none; color: #333; font-size: 10px; 
+    margin-top: 20px; width: 100%; cursor: pointer; font-weight: bold;
+}
+
+/* MÉTRICAS */
+.metric-badge { padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: bold; margin-right: 6px; }
+.m-low { background: rgba(255, 69, 58, 0.15); color: #ff453a; }
+.m-high { background: rgba(48, 209, 88, 0.15); color: #30d158; }
+
+.metrics-edit { 
+    display: flex; gap: 5px; margin-top: 20px; background: rgba(120, 120, 128, 0.1); 
+    padding: 8px; border-radius: 12px; 
+}
+.metrics-edit input { 
+    width: 100%; background: transparent; border: 1px solid var(--border);
+    border-radius: 6px; padding: 6px; color: var(--text); font-size: 10px; text-align: center;
+}
+
+/* MODAL */
+.overlay { 
+    position: fixed; inset: 0; background: rgba(0,0,0,0.85); 
+    backdrop-filter: blur(15px); display: none; justify-content: center; align-items: center; z-index: 2000; 
+}
+.roteiro-modal { 
+    width: 90%; max-width: 550px; background: var(--input-bg); padding: 40px; 
+    border-radius: 30px; border: 1px solid var(--border); color: var(--text);
+}
+
+/* ANIMAÇÃO POP */
+.animate-pop { animation: pop 0.4s ease-out; }
+@keyframes pop {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+/* VOLTA DAS CORES DOS BOTÕES DO CARD */
+
+.btn-action { background: #2c2c2e; color: #fff; border: none; padding: 12px; border-radius: 15px; cursor: pointer; }
+.btn-play { background: #ff453a; color: #fff; border: none; padding: 12px; border-radius: 15px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+.btn-play:hover { background: #ff5b52; transform: scale(1.05); }
+
+/* RESUMO DO CANAL - CORES VOLTANDO */
+.stat-box { background: rgba(120, 120, 128, 0.15); padding: 15px; border-radius: 16px; flex: 1; text-align: center; border: 1px solid var(--border); }
+.ctr-color { color: #ff9f1c !important; }
+.avd-color { color: #32d74b !important; }
+
+/* MÉTRICAS NOS CARDS */
+.metric-badge { padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: bold; margin-right: 6px; }
+.m-low { background: rgba(255, 69, 58, 0.2); color: #ff453a; }
+.m-high { background: rgba(48, 209, 88, 0.2); color: #30d158; }
+
+/* RESTANTE DO CSS (MODAL E ANIMAÇÕES) */
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); display: none; justify-content: center; align-items: center; z-index: 2000; }
+.roteiro-modal { width: 90%; max-width: 550px; background: #1c1c1e; padding: 40px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); color: #fff; }
+.animate-pop { animation: pop 0.4s ease-out; }
+@keyframes pop { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+/* --- ESTILO DAS METAS --- */
+
+.metas-modal {
+    width: 90%;
+    max-width: 800px;
+    background: var(--input-bg);
+    padding: 35px;
+    border-radius: 30px;
+    border: 1px solid var(--border);
+    color: var(--text);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+
+.metas-header h2 { margin: 0; font-size: 24px; }
+.metas-header p { color: #8e8e93; font-size: 14px; margin: 5px 0 25px 0; }
+
+.metas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.meta-card {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 20px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    transition: 0.3s;
+}
+
+.meta-label { color: #8e8e93; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+.meta-percent { font-size: 32px; margin: 10px 0; font-weight: 800; font-family: 'Inter', sans-serif; }
+
+.progress-container {
+    width: 100%;
+    height: 10px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 15px 0 10px 0;
+}
+
+.progress-bar {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.meta-footer {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    opacity: 0.6;
+}
+
+.metas-form {
+    padding-top: 25px;
+    border-top: 1px solid var(--border);
+}
+
+.metas-form h3 { font-size: 16px; margin-bottom: 15px; }
+
+.form-row {
+    display: flex;
+    gap: 12px;
+}
+
+.form-row input {
+    flex: 1;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+    color: var(--text);
+    outline: none;
+}
+
+/* Ajuste sutil para o modo claro no modal de metas */
+[data-theme="light"] .metas-modal { background: #fff; }
+[data-theme="light"] .meta-card { background: #f2f2f7; }
+[data-theme="light"] .progress-container { background: #e5e5ea; }
+

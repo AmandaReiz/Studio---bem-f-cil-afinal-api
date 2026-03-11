@@ -1,0 +1,42 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Video {
+  id          String   @id @default(uuid())
+  titulo      String
+  tema        String?
+  roteiro     String?  @db.Text
+  link        String?
+  thumbnail   String?  @db.LongText  
+  status      String   @default("Ideia")
+  dificuldade String   @default("Médio")
+  ctr         Float    @default(0)
+  avd         Float    @default(0)
+  views       String?  @default("0")
+  favorito    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}
+
+model Meta {
+  id          String   @id @default("config_metas") // ID fixo para facilitar o acesso
+  periodo     String   @default("Mensal")
+  
+  // Dados Atuais
+  views       Int      @default(0)
+  inscritos   Int      @default(0)
+  receita     Float    @default(0)
+  
+  // Metas (Objetivos)
+  metaViews   Int      @default(100000)
+  metaInsc    Int      @default(1000)
+  metaRec     Float    @default(500)
+  
+  updatedAt   DateTime @updatedAt
+}
