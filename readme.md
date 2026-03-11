@@ -52,3 +52,13 @@ Desenvolvedora: Amanda Reis
 Projeto: É bem fácil, afinal
 
 Status: Produção / Deploy Railway
+
+
+
+pra voltar pra rodar localmente 
+env. script tinhamos 
+
+  //"scripts": {
+   // "dev": "nodemon src/backend/server.js",
+    //"test": "echo \"Error: no test specified\" && exit 1"
+ // },
