@@ -3,6 +3,7 @@
 const API_URL = window.location.origin + "/videos";
 const METAS_URL = window.location.origin + "/metas";
 let idVideoAtivo = null; 
+let idVideoParaTrocaThumb = null; // Nova variável para controle
 window.listaVideosAtual = []; 
 
 // --- UTILITÁRIOS ---
@@ -53,7 +54,6 @@ function toggleTheme() {
 async function carregarVideos() {
     try {
         const res = await fetch(API_URL);
-        // Se der erro 500, ele não tenta processar os vídeos e não quebra o site
         if (!res.ok) {
             console.warn("Servidor em manutenção ou erro de conexão.");
             renderizarCards([]); 
@@ -64,7 +64,7 @@ async function carregarVideos() {
         renderizarCards(window.listaVideosAtual);
     } catch (error) {
         console.error("Erro ao carregar:", error);
-        renderizarCards([]); // Garante que o site continue funcionando sem vídeos
+        renderizarCards([]); 
     }
 }
 
@@ -80,8 +80,14 @@ function renderizarCards(videos) {
         const ctrClass = v.ctr < 5 ? 'm-low' : 'm-high';
         const avdClass = v.avd < 40 ? 'm-low' : 'm-high';
         
+        // Adicionei o onclick="prepararTrocaThumb('${v.id}')" na imagem
         card.innerHTML = `
-            ${v.thumbnail ? `<img src="${v.thumbnail}" style="width:100%; height:150px; object-fit:cover; border-radius:15px; margin-bottom:15px; border: 1px solid rgba(255,255,255,0.1)">` : ''}
+            <div class="thumb-container" onclick="prepararTrocaThumb('${v.id}')" style="cursor:pointer; position:relative; overflow:hidden; border-radius:15px; margin-bottom:15px;">
+                <img src="${v.thumbnail || 'placeholder-image-url'}" style="width:100%; height:150px; object-fit:cover; border: 1px solid rgba(255,255,255,0.1)">
+                <div class="thumb-overlay" style="position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; opacity:0; transition:0.3s;">
+                    <span style="color:#fff; font-size:12px; font-weight:bold;">📷 TROCAR FOTO</span>
+                </div>
+            </div>
             <div style="display:flex; justify-content:space-between; align-items:start">
                 <h3 style="margin:0; font-family: Helvetica, sans-serif; font-weight: bold;">${v.titulo}</h3>
                 <span onclick="toggleFav('${v.id}',${v.favorito})" style="cursor:pointer; font-size:22px; color:${v.favorito?'#ffd60a':'#333'}">★</span>
@@ -119,6 +125,27 @@ function renderizarCards(videos) {
         grid.appendChild(card);
     });
 }
+
+// --- MÁGICA DA TROCA DE THUMBNAIL ---
+
+function prepararTrocaThumb(id) {
+    idVideoParaTrocaThumb = id;
+    document.getElementById('update-thumb-input').click();
+}
+
+// Escuta quando um arquivo é selecionado no input invisível
+document.getElementById('update-thumb-input')?.addEventListener('change', async function() {
+    const file = this.files[0];
+    if (file && idVideoParaTrocaThumb) {
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            const base64 = e.target.result;
+            await atualizarTagDireto(idVideoParaTrocaThumb, 'thumbnail', base64);
+            idVideoParaTrocaThumb = null; // Reseta
+        };
+        reader.readAsDataURL(file);
+    }
+});
 
 // --- GERENCIAMENTO DE ROTEIRO ---
 
@@ -185,12 +212,10 @@ async function abrirMetas() {
             `;
         }).join('');
 
-        // Preenche o Progresso Atual
         document.getElementById('m-views').value = m.views;
         document.getElementById('m-insc').value = m.inscritos;
         document.getElementById('m-rec').value = m.receita;
 
-        // Preenche os Novos Objetivos (Metas editáveis)
         document.getElementById('mt-views').value = m.metaViews;
         document.getElementById('mt-insc').value = m.metaInsc;
         document.getElementById('mt-rec').value = m.metaRec;
@@ -219,7 +244,7 @@ async function salvarMetas() {
             body: JSON.stringify(dados)
         });
         if (res.ok) {
-            abrirMetas(); // Recarrega as barras com os novos valores
+            abrirMetas();
         }
     } catch (e) { console.error("Erro ao salvar metas:", e); }
 }
