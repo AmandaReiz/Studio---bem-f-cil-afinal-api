@@ -1,6 +1,7 @@
 const express = require('express');
 const { PrismaClient } = require('@prisma/client');
 const cors = require('cors');
+const path = require('path');
 
 const app = express();
 const prisma = new PrismaClient();
@@ -9,10 +10,15 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-// Rota de Teste para o VS Code
+// --- SERVIR FRONTEND ---
+// Como server.js está em src/backend, subimos um nível (..) e entramos em frontend
+app.use(express.static(path.join(__dirname, '..', 'frontend')));
+
+// Rota de Teste
 app.get('/health', (req, res) => res.json({ status: "On-line! 🚀" }));
 
-// Listar todos os vídeos
+// --- ROTAS DE VÍDEOS ---
+
 app.get('/videos', async (req, res) => {
     try {
         const videos = await prisma.video.findMany({ orderBy: { createdAt: 'desc' } });
@@ -22,7 +28,6 @@ app.get('/videos', async (req, res) => {
     }
 });
 
-// Listar favoritos
 app.get('/videos/favoritos', async (req, res) => {
     try {
         const favoritos = await prisma.video.findMany({ where: { favorito: true }, orderBy: { createdAt: 'desc' } });
@@ -32,7 +37,6 @@ app.get('/videos/favoritos', async (req, res) => {
     }
 });
 
-// Criar vídeo
 app.post('/videos', async (req, res) => {
     const { titulo, tema, roteiro, link, thumbnail, status, dificuldade } = req.body;
     try {
@@ -57,25 +61,18 @@ app.post('/videos', async (req, res) => {
     }
 });
 
-// ATUALIZADO: Rota de Patch corrigida para aceitar ROTEIRO
 app.patch('/videos/:id', async (req, res) => {
     const { id } = req.params;
     const { ctr, avd, views, status, dificuldade, thumbnail, roteiro } = req.body;
     
     try {
         const dadosParaAtualizar = {};
-        
-        // Métricas
         if (ctr !== undefined) dadosParaAtualizar.ctr = parseFloat(ctr || 0);
         if (avd !== undefined) dadosParaAtualizar.avd = parseFloat(avd || 0);
         if (views !== undefined) dadosParaAtualizar.views = String(views);
-        
-        // Tags e Identidade
         if (status !== undefined) dadosParaAtualizar.status = status;
         if (dificuldade !== undefined) dadosParaAtualizar.dificuldade = dificuldade;
         if (thumbnail !== undefined) dadosParaAtualizar.thumbnail = thumbnail;
-
-        // LINHA QUE FALTAVA: Adicionando o roteiro na atualização
         if (roteiro !== undefined) dadosParaAtualizar.roteiro = roteiro;
 
         const atualizado = await prisma.video.update({
@@ -89,7 +86,6 @@ app.patch('/videos/:id', async (req, res) => {
     }
 });
 
-// Favoritar
 app.patch('/videos/:id/favoritar', async (req, res) => {
     const { id } = req.params;
     const { favorito } = req.body;
@@ -104,7 +100,6 @@ app.patch('/videos/:id/favoritar', async (req, res) => {
     }
 });
 
-// Deletar
 app.delete('/videos/:id', async (req, res) => {
     const { id } = req.params;
     try {
@@ -115,11 +110,8 @@ app.delete('/videos/:id', async (req, res) => {
     }
 });
 
-app.listen(3333, () => console.log("🚀 Studio PRO ON na porta 3333"));
-
 // --- ROTAS DE METAS ---
 
-// Buscar metas (ou criar se for a primeira vez)
 app.get('/metas', async (req, res) => {
     try {
         let metas = await prisma.meta.findUnique({ where: { id: "config_metas" } });
@@ -134,7 +126,6 @@ app.get('/metas', async (req, res) => {
     }
 });
 
-// Atualizar metas
 app.patch('/metas', async (req, res) => {
     const { views, inscritos, receita, metaViews, metaInsc, metaRec } = req.body;
     try {
@@ -153,4 +144,17 @@ app.patch('/metas', async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: "Erro ao atualizar metas" });
     }
+});
+
+// --- ROTA RAIZ (Fix para Node v24 e caminhos) ---
+// Mudamos de '/*' para '(.*)' ou '/*index.html' se o erro persistir, 
+// mas o padrão correto para capturar tudo no Express moderno é usar a barra antes:
+app.get(/^\/(?!videos|metas|health).*/, (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'frontend', 'index.html'));
+});
+
+// --- INICIALIZAÇÃO ---
+const PORT = process.env.PORT || 3333;
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 Studio PRO ON na porta ${PORT}`);
 });

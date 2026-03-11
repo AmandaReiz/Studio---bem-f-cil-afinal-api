@@ -1,5 +1,7 @@
-const API_URL = "http://localhost:3333/videos";
-const METAS_URL = "http://localhost:3333/metas";
+// const API_URL = "http://localhost:3333/videos"; /RODAR LOCALMENTE PC
+// const METAS_URL = "http://localhost:3333/metas"; /RODAR LOCALMENTE PC        
+const API_URL = window.location.origin + "/videos";
+const METAS_URL = window.location.origin + "/metas";
 let idVideoAtivo = null; 
 window.listaVideosAtual = []; 
 
