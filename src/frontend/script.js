@@ -53,10 +53,19 @@ function toggleTheme() {
 async function carregarVideos() {
     try {
         const res = await fetch(API_URL);
+        // Se der erro 500, ele não tenta processar os vídeos e não quebra o site
+        if (!res.ok) {
+            console.warn("Servidor em manutenção ou erro de conexão.");
+            renderizarCards([]); 
+            return;
+        }
         const videos = await res.json();
-        window.listaVideosAtual = videos; 
-        renderizarCards(videos);
-    } catch (e) { console.error("Erro ao carregar vídeos:", e); }
+        window.listaVideosAtual = Array.isArray(videos) ? videos : [];
+        renderizarCards(window.listaVideosAtual);
+    } catch (error) {
+        console.error("Erro ao carregar:", error);
+        renderizarCards([]); // Garante que o site continue funcionando sem vídeos
+    }
 }
 
 function renderizarCards(videos) {
