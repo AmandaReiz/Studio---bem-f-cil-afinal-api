@@ -6,31 +6,35 @@ const path = require('path');
 const app = express();
 const prisma = new PrismaClient();
 
+// 1. Middlewares básicos
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-// --- SERVIR FRONTEND ---
-// Como server.js está em src/backend, subimos um nível (..) e entramos em frontend
-app.use(express.static(path.join(__dirname, '..', 'frontend')));
+// 2. Servir arquivos estáticos (CSS, JS, Imagens)
+const frontendPath = path.resolve(__dirname, '..', 'frontend');
+app.use(express.static(frontendPath));
 
-// Rota de Teste
-app.get('/health', (req, res) => res.json({ status: "On-line! 🚀" }));
+// 3. Rota de Teste (Healthcheck)
+app.get('/health', (req, res) => res.json({ status: "On-line! 🚀", port: process.env.PORT || 3333 }));
 
 // --- ROTAS DE VÍDEOS ---
 
 app.get('/videos', async (req, res) => {
     try {
-        const videos = await prisma.video.findMany({ orderBy: { createdAt: 'desc' } });
+        // Ajustado para Video (maiúsculo)
+        const videos = await prisma.Video.findMany({ orderBy: { createdAt: 'desc' } });
         res.json(videos);
     } catch (error) {
-        res.status(500).json({ error: "Erro ao buscar vídeos" });
+        console.error("ERRO CRÍTICO /VIDEOS:", error);
+        res.status(500).json({ error: "Erro ao buscar vídeos", details: error.message });
     }
 });
 
 app.get('/videos/favoritos', async (req, res) => {
     try {
-        const favoritos = await prisma.video.findMany({ where: { favorito: true }, orderBy: { createdAt: 'desc' } });
+        // Ajustado para Video (maiúsculo)
+        const favoritos = await prisma.Video.findMany({ where: { favorito: true }, orderBy: { createdAt: 'desc' } });
         res.json(favoritos);
     } catch (error) {
         res.status(500).json({ error: "Erro ao buscar favoritos" });
@@ -40,7 +44,8 @@ app.get('/videos/favoritos', async (req, res) => {
 app.post('/videos', async (req, res) => {
     const { titulo, tema, roteiro, link, thumbnail, status, dificuldade } = req.body;
     try {
-        const novoVideo = await prisma.video.create({
+        // Ajustado para Video (maiúsculo)
+        const novoVideo = await prisma.Video.create({
             data: { 
                 titulo, 
                 tema, 
@@ -57,6 +62,7 @@ app.post('/videos', async (req, res) => {
         });
         res.status(201).json(novoVideo);
     } catch (error) {
+        console.error("ERRO AO SALVAR VÍDEO:", error);
         res.status(500).json({ error: "Erro ao salvar", detalhes: error.message });
     }
 });
@@ -75,13 +81,14 @@ app.patch('/videos/:id', async (req, res) => {
         if (thumbnail !== undefined) dadosParaAtualizar.thumbnail = thumbnail;
         if (roteiro !== undefined) dadosParaAtualizar.roteiro = roteiro;
 
-        const atualizado = await prisma.video.update({
+        // Ajustado para Video (maiúsculo)
+        const atualizado = await prisma.Video.update({
             where: { id },
             data: dadosParaAtualizar
         });
         res.json(atualizado);
     } catch (error) {
-        console.error("Erro Prisma:", error);
+        console.error("Erro Prisma Update:", error);
         res.status(500).json({ error: "Erro ao atualizar dados" });
     }
 });
@@ -90,7 +97,8 @@ app.patch('/videos/:id/favoritar', async (req, res) => {
     const { id } = req.params;
     const { favorito } = req.body;
     try {
-        const atualizado = await prisma.video.update({ 
+        // Ajustado para Video (maiúsculo)
+        const atualizado = await prisma.Video.update({ 
             where: { id }, 
             data: { favorito: Boolean(favorito) } 
         });
@@ -103,7 +111,8 @@ app.patch('/videos/:id/favoritar', async (req, res) => {
 app.delete('/videos/:id', async (req, res) => {
     const { id } = req.params;
     try {
-        await prisma.video.delete({ where: { id } });
+        // Ajustado para Video (maiúsculo)
+        await prisma.Video.delete({ where: { id } });
         res.status(204).send();
     } catch (error) {
         res.status(500).json({ error: "Erro ao deletar" });
@@ -114,9 +123,10 @@ app.delete('/videos/:id', async (req, res) => {
 
 app.get('/metas', async (req, res) => {
     try {
-        let metas = await prisma.meta.findUnique({ where: { id: "config_metas" } });
+        // Ajustado para Meta (maiúsculo)
+        let metas = await prisma.Meta.findUnique({ where: { id: "config_metas" } });
         if (!metas) {
-            metas = await prisma.meta.create({
+            metas = await prisma.Meta.create({
                 data: { id: "config_metas", metaViews: 100000, metaInsc: 1000, metaRec: 500 }
             });
         }
@@ -129,7 +139,8 @@ app.get('/metas', async (req, res) => {
 app.patch('/metas', async (req, res) => {
     const { views, inscritos, receita, metaViews, metaInsc, metaRec } = req.body;
     try {
-        const atualizado = await prisma.meta.update({
+        // Ajustado para Meta (maiúsculo)
+        const atualizado = await prisma.Meta.update({
             where: { id: "config_metas" },
             data: {
                 views: views !== undefined ? parseInt(views) : undefined,
@@ -146,11 +157,14 @@ app.patch('/metas', async (req, res) => {
     }
 });
 
-// --- ROTA RAIZ (Fix para Node v24 e caminhos) ---
-// Mudamos de '/*' para '(.*)' ou '/*index.html' se o erro persistir, 
-// mas o padrão correto para capturar tudo no Express moderno é usar a barra antes:
+// --- ROTA RAIZ ---
 app.get(/^\/(?!videos|metas|health).*/, (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'frontend', 'index.html'));
+    const indexPath = path.join(frontendPath, 'index.html');
+    res.sendFile(indexPath, (err) => {
+        if (err) {
+            res.status(404).send("Arquivo index.html não encontrado na pasta frontend.");
+        }
+    });
 });
 
 // --- INICIALIZAÇÃO ---

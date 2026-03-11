@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE `video` ADD COLUMN `views` VARCHAR(191) NULL DEFAULT '0';
