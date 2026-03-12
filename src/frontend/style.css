@@ -565,6 +565,57 @@ body {
 }
 
 .filter-btn:hover { background: var(--accent); color: #000; }
+/* AJUSTES PARA TELAS PEQUENAS (IPHONE / MOBILE) */
+@media (max-width: 768px) {
+    body {
+        overflow-y: auto; /* Libera o scroll vertical que estava travado */
+        height: auto;
+    }
+
+    .app-container {
+        flex-direction: column; /* Coloca a sidebar em cima e os cards embaixo */
+        height: auto;
+        overflow: visible;
+    }
+
+    .sidebar {
+        width: 100%; 
+        position: relative; /* Tira o 'fixed' no celular para não cobrir os cards */
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding: 20px;
+    }
+
+    .main-content {
+        margin-left: 0; /* Remove o recuo da sidebar no mobile */
+        width: 100%;
+        padding: 20px;
+        min-height: 500px;
+    }
+
+    .grid {
+        grid-template-columns: 1fr; /* Exibe um card por linha para ficar legível */
+        gap: 20px;
+    }
+
+    /* Ajuste da Navbar no Celular */
+    .nav-content {
+        padding: 0 15px;
+        flex-wrap: wrap; /* Permite que os itens quebrem linha se necessário */
+        height: auto;
+        min-height: 70px;
+        padding-bottom: 10px;
+    }
+
+    .nav-filters {
+        order: 3; /* Joga os filtros para baixo da logo no mobile */
+        width: 100%;
+        justify-content: flex-start;
+        overflow-x: auto;
+        padding: 10px 0;
+    }
+}
 
 /* MEDIA QUERY: Para a tela apertadinha */
 @media (max-width: 768px) {

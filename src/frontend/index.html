@@ -1,40 +1,43 @@
 <!DOCTYPE html>
 <html lang="pt-br" data-theme="dark">
 <head>
-    <link rel="icon" type="image/png" href="logo.PNG">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚫</text></svg>">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="stylesheet" href="style.css">
     <title>É bem fácil, afinal | Studio Pro</title>
 </head>
 <body>
     <nav class="navbar">
         <div class="nav-content">
-            <div class="nav-logo" onclick="carregarVideos()">
-                <img src="logo.PNG" alt="Logo Studio Pro" class="logo-circle">
-                <span>É bem fácil, afinal</span>
+            <div class="nav-logo" onclick="carregarVideos()" style="cursor: pointer;">
+                <span style="font-weight: bold; font-size: 1.2rem; letter-spacing: 1px;">É bem fácil, afinal</span>
             </div>
             
             <div class="nav-filters">
                 <button onclick="carregarVideos()" class="filter-btn">Todos</button>
+                <button onclick="filtrarCanal('bem-facil')" class="filter-btn">✨ É bem fácil, afinal</button>
+                <button onclick="filtrarCanal('codigo')" class="filter-btn">🧠 Código da inteligência</button>
+                
+                <span style="border-left: 1px solid var(--border); margin: 0 5px; height: 20px;"></span>
+
                 <button onclick="filtrarStatus('Ideia')" class="filter-btn">🔴 Ideia</button>
                 <button onclick="filtrarStatus('Roteirizando')" class="filter-btn">🟡 Editando</button>
                 <button onclick="filtrarStatus('Postado')" class="filter-btn">🟢 Postado</button>
-                
-                <span style="border-left: 1px solid var(--border); margin: 0 5px;"></span>
-
-                <button onclick="filtrarDificuldade('Rápido')" class="filter-btn">⚡ Rápido</button>
-                <button onclick="filtrarDificuldade('Médio')" class="filter-btn">🛠️ Médio</button>
-                <button onclick="filtrarDificuldade('Complexo')" class="filter-btn">🧠 Complexo</button>
             </div>
 
             <div class="nav-right">
                 <div class="menu-container">
                     <button class="menu-dots-btn" onclick="toggleMenu()">⋮</button>
                     <div id="dropdown-menu" class="dropdown-content">
-                        <a href="#" onclick="abrirMetas(); toggleMenu()">Metas</a>
-                        <a href="#" onclick="carregarSucessos(); toggleMenu()">Favoritos</a>
-                        <a href="https://studio.youtube.com" target="_blank">Analytics</a>
+                        <p style="font-size: 0.7rem; color: gray; padding: 10px 15px 5px; margin: 0; text-transform: uppercase;">Dificuldade</p>
+                        <a href="#" onclick="filtrarDificuldade('Rápido')">⚡ Rápido</a>
+                        <a href="#" onclick="filtrarDificuldade('Médio')">🛠️ Médio</a>
+                        <a href="#" onclick="filtrarDificuldade('Complexo')">🧠 Complexo</a>
+                        <hr style="border: 0; border-top: 1px solid var(--border); margin: 5px 0;">
+                        <a href="#" onclick="abrirMetas(); toggleMenu()">📈 Metas</a>
+                        <a href="#" onclick="carregarSucessos(); toggleMenu()">⭐ Favoritos</a>
+                        <a href="https://studio.youtube.com" target="_blank">📊 Analytics</a>
                     </div>
                 </div>
                 <button onclick="toggleTheme()" class="btn-theme-toggle">🌓</button>
@@ -55,6 +58,12 @@
                 <input type="text" id="tema" placeholder="Tema">
                 <input type="text" id="link" placeholder="Link do vídeo">
                 
+                <label style="font-size: 11px; color: gray; margin-left: 5px;">CANAL:</label>
+                <select id="canal-origem" class="input-select" style="margin-bottom: 12px; width: 100%;">
+                    <option value="bem-facil">É bem fácil, afinal</option>
+                    <option value="codigo">Código da Inteligência</option>
+                </select>
+
                 <label class="file-label" id="label-thumb">
                     <span id="text-thumb">📁 Upload Thumbnail</span>
                     <input type="file" id="thumbnail-pc" accept="image/*" onchange="converterThumb(this)">
@@ -75,15 +84,18 @@
                 </div>
 
                 <textarea id="roteiro" placeholder="Escreva o roteiro inicial aqui..."></textarea>
+                
                 <button onclick="salvarVideo()" class="btn-save">Salvar Planejamento</button>
                 
-                <button onclick="exportarBackup()" class="btn-backup">📤 Exportar JSON</button>
-                <button onclick="document.getElementById('importInput').click()" class="btn-import">📥 Importar JSON</button>
+                <div style="display: flex; gap: 5px; margin-top: 10px;">
+                    <button onclick="exportarBackup()" class="btn-backup" style="flex: 1;">📤 Exportar</button>
+                    <button onclick="document.getElementById('importInput').click()" class="btn-import" style="flex: 1;">📥 Importar</button>
+                </div>
                 <input type="file" id="importInput" style="display: none" onchange="importarJSON(event)">
             </div>
 
             <div class="channel-summary">
-                <div class="summary-header"><h3>Resumo do Canal</h3></div>
+                <div class="summary-header"><h3>Resumo Geral</h3></div>
                 <div class="stats-grid">
                     <div class="stat-box">
                         <span class="stat-label">CTR MÉDIO</span>
@@ -117,11 +129,9 @@
         <div class="metas-modal" onclick="event.stopPropagation()">
             <header class="metas-header">
                 <h2>📈 Metas de Performance</h2>
-                <p>Ajuste seus números e objetivos conforme o canal cresce</p>
+                <p>Ajuste seu progresso e seus alvos</p>
             </header>
-
             <div class="metas-grid"></div>
-
             <div class="metas-form">
                 <div class="form-section">
                     <h3>📍 Progresso Atual</h3>
@@ -131,19 +141,16 @@
                         <input type="number" id="m-rec" placeholder="Receita Atual">
                     </div>
                 </div>
-
                 <div class="form-section" style="margin-top: 20px;">
-                    <h3>🎯 Novos Objetivos</h3>
+                    <h3>🎯 Alvos das Metas (Objetivos)</h3>
                     <div class="form-row">
-                        <input type="number" id="mt-views" placeholder="Meta de Views">
-                        <input type="number" id="mt-insc" placeholder="Meta de Inscritos">
-                        <input type="number" id="mt-rec" placeholder="Meta de Receita">
+                        <input type="number" id="mt-views" placeholder="Meta Views">
+                        <input type="number" id="mt-insc" placeholder="Meta Inscritos">
+                        <input type="number" id="mt-rec" placeholder="Meta Receita">
                     </div>
                 </div>
-
                 <button onclick="salvarMetas()" class="btn-save" style="margin-top: 25px;">💾 Atualizar Tudo</button>
             </div>
-            
             <div style="margin-top: 20px; text-align: right;">
                 <button onclick="fecharMetas()" class="btn-cancel">Fechar</button>
             </div>
@@ -151,7 +158,6 @@
     </div>
 
     <input type="file" id="update-thumb-input" style="display: none" accept="image/*">
-
     <script src="script.js"></script>
 </body>
 </html>

@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -12,9 +11,10 @@ model Video {
   id          String   @id @default(uuid())
   titulo      String
   tema        String?
+  canal       String?  @default("bem-facil")
   roteiro     String?  @db.Text
   link        String?
-  thumbnail   String?  @db.LongText  
+  thumbnail   String?  @db.LongText
   status      String   @default("Ideia")
   dificuldade String   @default("Médio")
   ctr         Float    @default(0)
@@ -25,18 +25,13 @@ model Video {
 }
 
 model Meta {
-  id          String   @id @default("config_metas") // ID fixo para facilitar o acesso
+  id          String   @id @default("config_metas")
   periodo     String   @default("Mensal")
-  
-  // Dados Atuais
   views       Int      @default(0)
   inscritos   Int      @default(0)
   receita     Float    @default(0)
-  
-  // Metas (Objetivos)
   metaViews   Int      @default(100000)
   metaInsc    Int      @default(1000)
   metaRec     Float    @default(500)
-  
   updatedAt   DateTime @updatedAt
 }
