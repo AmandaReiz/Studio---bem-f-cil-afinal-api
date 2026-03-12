@@ -4,7 +4,15 @@ const cors = require('cors');
 const path = require('path');
 
 const app = express();
-const prisma = new PrismaClient();
+
+// CONFIGURAÇÃO PRISMA PARA RAILWAY (PRISMA 7)
+const prisma = new PrismaClient({
+    datasources: {
+        db: {
+            url: process.env.DATABASE_URL,
+        },
+    },
+});
 
 // 1. Middlewares básicos
 app.use(cors());
@@ -22,8 +30,7 @@ app.get('/health', (req, res) => res.json({ status: "On-line! 🚀", port: proce
 
 app.get('/videos', async (req, res) => {
     try {
-        // Ajustado para Video (maiúsculo)
-        const videos = await prisma.Video.findMany({ orderBy: { createdAt: 'desc' } });
+        const videos = await prisma.video.findMany({ orderBy: { createdAt: 'desc' } });
         res.json(videos);
     } catch (error) {
         console.error("ERRO CRÍTICO /VIDEOS:", error);
@@ -33,8 +40,7 @@ app.get('/videos', async (req, res) => {
 
 app.get('/videos/favoritos', async (req, res) => {
     try {
-        // Ajustado para Video (maiúsculo)
-        const favoritos = await prisma.Video.findMany({ where: { favorito: true }, orderBy: { createdAt: 'desc' } });
+        const favoritos = await prisma.video.findMany({ where: { favorito: true }, orderBy: { createdAt: 'desc' } });
         res.json(favoritos);
     } catch (error) {
         res.status(500).json({ error: "Erro ao buscar favoritos" });
@@ -44,8 +50,7 @@ app.get('/videos/favoritos', async (req, res) => {
 app.post('/videos', async (req, res) => {
     const { titulo, tema, roteiro, link, thumbnail, status, dificuldade } = req.body;
     try {
-        // Ajustado para Video (maiúsculo)
-        const novoVideo = await prisma.Video.create({
+        const novoVideo = await prisma.video.create({
             data: { 
                 titulo, 
                 tema, 
@@ -81,8 +86,7 @@ app.patch('/videos/:id', async (req, res) => {
         if (thumbnail !== undefined) dadosParaAtualizar.thumbnail = thumbnail;
         if (roteiro !== undefined) dadosParaAtualizar.roteiro = roteiro;
 
-        // Ajustado para Video (maiúsculo)
-        const atualizado = await prisma.Video.update({
+        const atualizado = await prisma.video.update({
             where: { id },
             data: dadosParaAtualizar
         });
@@ -97,8 +101,7 @@ app.patch('/videos/:id/favoritar', async (req, res) => {
     const { id } = req.params;
     const { favorito } = req.body;
     try {
-        // Ajustado para Video (maiúsculo)
-        const atualizado = await prisma.Video.update({ 
+        const atualizado = await prisma.video.update({ 
             where: { id }, 
             data: { favorito: Boolean(favorito) } 
         });
@@ -111,8 +114,7 @@ app.patch('/videos/:id/favoritar', async (req, res) => {
 app.delete('/videos/:id', async (req, res) => {
     const { id } = req.params;
     try {
-        // Ajustado para Video (maiúsculo)
-        await prisma.Video.delete({ where: { id } });
+        await prisma.video.delete({ where: { id } });
         res.status(204).send();
     } catch (error) {
         res.status(500).json({ error: "Erro ao deletar" });
@@ -123,10 +125,9 @@ app.delete('/videos/:id', async (req, res) => {
 
 app.get('/metas', async (req, res) => {
     try {
-        // Ajustado para Meta (maiúsculo)
-        let metas = await prisma.Meta.findUnique({ where: { id: "config_metas" } });
+        let metas = await prisma.meta.findUnique({ where: { id: "config_metas" } });
         if (!metas) {
-            metas = await prisma.Meta.create({
+            metas = await prisma.meta.create({
                 data: { id: "config_metas", metaViews: 100000, metaInsc: 1000, metaRec: 500 }
             });
         }
@@ -139,8 +140,7 @@ app.get('/metas', async (req, res) => {
 app.patch('/metas', async (req, res) => {
     const { views, inscritos, receita, metaViews, metaInsc, metaRec } = req.body;
     try {
-        // Ajustado para Meta (maiúsculo)
-        const atualizado = await prisma.Meta.update({
+        const atualizado = await prisma.meta.update({
             where: { id: "config_metas" },
             data: {
                 views: views !== undefined ? parseInt(views) : undefined,
