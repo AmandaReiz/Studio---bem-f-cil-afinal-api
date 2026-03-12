@@ -2,6 +2,7 @@ const API_URL = window.location.origin + "/videos";
 const METAS_URL = window.location.origin + "/metas";
 // const API_URL = "http://localhost:3333/videos"; 
 // const METAS_URL = "http://localhost:3333/metas"; 
+
 let idVideoAtivo = null; 
 let idVideoParaTrocaThumb = null; 
 window.listaVideosAtual = []; 
@@ -69,6 +70,13 @@ async function carregarVideos() {
 function renderizarCards(videos) {
     const grid = document.getElementById('video-grid');
     grid.innerHTML = '';
+    
+    // Proteção caso não existam vídeos
+    if (!videos || videos.length === 0) {
+        document.getElementById('video-count').innerText = `0 vídeos`;
+        return;
+    }
+
     document.getElementById('video-count').innerText = `${videos.length} vídeos`;
     calcularResumo(videos);
 
@@ -79,11 +87,10 @@ function renderizarCards(videos) {
         const avdClass = v.avd < 40 ? 'm-low' : 'm-high';
         
         // --- LÓGICA DE SEPARAÇÃO CANAL | TEMA ---
-        // Se o tema tiver o separador "|", a gente divide. Se não, assume 'bem-facil'
         const partes = v.tema && v.tema.includes('|') ? v.tema.split('|') : ['bem-facil', v.tema || 'Geral'];
         const canalData = partes[0];
         const temaExibicao = partes[1];
-        const nomeCanal = canalData === 'codigo' ? 'Código da Inteligência' : 'É bem fácil, afinal';
+        const nomeCanal = canalData === 'codigo' ? '🧠 Código da Inteligência' : '✨ É bem fácil, afinal';
 
         card.innerHTML = `
             <div class="thumb-container" onclick="prepararTrocaThumb('${v.id}')" style="cursor:pointer; position:relative; overflow:hidden; border-radius:15px; margin-bottom:15px;">
@@ -95,7 +102,7 @@ function renderizarCards(videos) {
             <div style="display:flex; justify-content:space-between; align-items:start">
                 <div>
                     <h3 style="margin:0; font-family: Helvetica, sans-serif; font-weight: bold;">${v.titulo}</h3>
-                    <span class="canal-tag">${nomeCanal}</span>
+                    <span class="canal-tag" style="font-size: 10px; color: var(--accent); font-weight: bold; text-transform: uppercase;">${nomeCanal}</span>
                 </div>
                 <span onclick="toggleFav('${v.id}',${v.favorito})" style="cursor:pointer; font-size:22px; color:${v.favorito?'#ffd60a':'#333'}">★</span>
             </div>
@@ -251,7 +258,6 @@ async function salvarVideo() {
 
     const body = {
         titulo: document.getElementById('titulo').value,
-        // SALVAMOS CANAL E TEMA NO MESMO CAMPO PARA NÃO DAR ERRO NO BANCO
         tema: `${canal}|${temaReal}`, 
         link: document.getElementById('link').value,
         thumbnail: document.getElementById('thumbnail-b64').value,
@@ -315,7 +321,7 @@ async function toggleFav(id, stat) {
 // --- FILTROS ---
 
 function calcularResumo(videos) {
-    if (videos.length === 0) {
+    if (!videos || videos.length === 0) {
         document.getElementById('avg-ctr').innerText = '0%';
         document.getElementById('avg-retention').innerText = '0%';
         return;

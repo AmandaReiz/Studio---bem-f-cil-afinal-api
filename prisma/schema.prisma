@@ -12,7 +12,7 @@ model Video {
   id          String   @id @default(uuid())
   titulo      String
   tema        String?
-  canal       String?  @default("bem-facil")
+  // canal       String?  @default("bem-facil")
   roteiro     String?  @db.Text
   link        String?
   thumbnail   String?  @db.LongText
