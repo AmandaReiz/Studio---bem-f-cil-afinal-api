@@ -5,20 +5,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="stylesheet" href="style.css">
-    <title>É bem fácil, afinal | Studio Pro</title>
+    <title>Studio Pro</title>
 </head>
 <body>
     <nav class="navbar">
         <div class="nav-content">
-            <div class="nav-logo" onclick="carregarVideos()" style="cursor: pointer;">
-                <span style="font-weight: bold; font-size: 1.2rem; letter-spacing: 1px;">É bem fácil, afinal</span>
+            <div class="nav-logo" onclick="resetarFiltros()" style="cursor: pointer;">
+                <span style="font-weight: bold; font-size: 1.2rem; letter-spacing: 1px;">Studio Pro</span>
             </div>
-            
+
             <div class="nav-filters">
-                <button onclick="carregarVideos()" class="filter-btn">Todos</button>
+                <button onclick="resetarFiltros()" class="filter-btn">Todos</button>
                 <button onclick="filtrarCanal('bem-facil')" class="filter-btn">✨ É bem fácil, afinal</button>
                 <button onclick="filtrarCanal('codigo')" class="filter-btn">🧠 Código da inteligência</button>
-                
+                <button onclick="filtrarCanal('amanda-reis')" class="filter-btn">💫 Amanda Reis</button>
+                <button onclick="filtrarCanal('simplificando-vida')" class="filter-btn">🎯 Simplificando a vida</button>
+
                 <span style="border-left: 1px solid var(--border); margin: 0 5px; height: 20px;"></span>
 
                 <button onclick="filtrarStatus('Ideia')" class="filter-btn">🔴 Ideia</button>
@@ -27,6 +29,23 @@
             </div>
 
             <div class="nav-right">
+                <div class="nav-tools">
+                    <input
+                        id="search-input"
+                        class="nav-search"
+                        type="text"
+                        placeholder="Buscar por título ou tema"
+                        oninput="atualizarBusca(this.value)"
+                    >
+                    <select id="sort-select" class="nav-sort" onchange="atualizarOrdenacao(this.value)">
+                        <option value="date_desc">Mais recentes</option>
+                        <option value="best_desc">Melhores vídeos</option>
+                        <option value="ctr_desc">CTR maior</option>
+                        <option value="avd_desc">AVD maior</option>
+                        <option value="views_desc">Mais views</option>
+                        <option value="favorites_desc">Favoritos</option>
+                    </select>
+                </div>
                 <div class="menu-container">
                     <button class="menu-dots-btn" onclick="toggleMenu()">⋮</button>
                     <div id="dropdown-menu" class="dropdown-content">
@@ -35,12 +54,14 @@
                         <a href="#" onclick="filtrarDificuldade('Médio')">🛠️ Médio</a>
                         <a href="#" onclick="filtrarDificuldade('Complexo')">🧠 Complexo</a>
                         <hr style="border: 0; border-top: 1px solid var(--border); margin: 5px 0;">
-                        <a href="#" onclick="abrirMetas(); toggleMenu()">📈 Metas</a>
                         <a href="#" onclick="carregarSucessos(); toggleMenu()">⭐ Favoritos</a>
+                        <a href="#" onclick="mostrarLixeira(); toggleMenu()">🗑️ Lixeira</a>
+                        <a href="#" onclick="mostrarAtivos(); toggleMenu()">↩️ Voltar aos cards</a>
+                        <a href="#" onclick="abrirMetas(); toggleMenu()">📈 Metas</a>
                         <a href="https://studio.youtube.com" target="_blank">📊 Analytics</a>
                     </div>
                 </div>
-                <button onclick="toggleTheme()" class="btn-theme-toggle">🌓</button>
+                <button onclick="toggleTheme()" class="btn-theme-toggle">🌙</button>
                 <span id="video-count" class="video-badge">0 vídeos</span>
             </div>
         </div>
@@ -52,16 +73,18 @@
                 <h2>Adicionar Vídeo</h2>
                 <p>Planeje seu conteúdo</p>
             </div>
-            
+
             <div class="form-group">
                 <input type="text" id="titulo" placeholder="Título do vídeo">
                 <input type="text" id="tema" placeholder="Tema">
                 <input type="text" id="link" placeholder="Link do vídeo">
-                
+
                 <label style="font-size: 11px; color: gray; margin-left: 5px;">CANAL:</label>
                 <select id="canal-origem" class="input-select" style="margin-bottom: 12px; width: 100%;">
                     <option value="bem-facil">É bem fácil, afinal</option>
                     <option value="codigo">Código da Inteligência</option>
+                    <option value="amanda-reis">Amanda Reis</option>
+                    <option value="simplificando-vida">Simplificando a vida</option>
                 </select>
 
                 <label class="file-label" id="label-thumb">
@@ -84,9 +107,9 @@
                 </div>
 
                 <textarea id="roteiro" placeholder="Escreva o roteiro inicial aqui..."></textarea>
-                
+
                 <button onclick="salvarVideo()" class="btn-save">Salvar Planejamento</button>
-                
+
                 <div style="display: flex; gap: 5px; margin-top: 10px;">
                     <button onclick="exportarBackup()" class="btn-backup" style="flex: 1;">📤 Exportar</button>
                     <button onclick="document.getElementById('importInput').click()" class="btn-import" style="flex: 1;">📥 Importar</button>
@@ -110,11 +133,12 @@
         </aside>
 
         <main class="main-content">
+            <div id="grid-status" class="grid-status"></div>
             <div id="video-grid" class="grid"></div>
         </main>
     </div>
 
-    <div id="overlay-roteiro" class="overlay" onclick="fecharRoteiro()">
+    <div id="overlay-roteiro" class="overlay">
         <div class="roteiro-modal" onclick="event.stopPropagation()">
             <h2 id="roteiro-titulo"></h2>
             <textarea id="roteiro-editavel" class="roteiro-textarea" placeholder="Edite seu roteiro aqui..."></textarea>
@@ -125,12 +149,23 @@
         </div>
     </div>
 
-    <div id="overlay-metas" class="overlay" onclick="fecharMetas()">
+    <div id="overlay-metas" class="overlay">
         <div class="metas-modal" onclick="event.stopPropagation()">
             <header class="metas-header">
                 <h2>📈 Metas de Performance</h2>
                 <p>Ajuste seu progresso e seus alvos</p>
             </header>
+            <div class="form-section" style="margin-bottom: 20px;">
+                <h3>Canal</h3>
+                <div class="form-row">
+                    <select id="metas-canal" class="input-select" onchange="trocarCanalMetas()">
+                        <option value="bem-facil">É bem fácil, afinal</option>
+                        <option value="codigo">Código da Inteligência</option>
+                        <option value="amanda-reis">Amanda Reis</option>
+                        <option value="simplificando-vida">Simplificando a vida</option>
+                    </select>
+                </div>
+            </div>
             <div class="metas-grid"></div>
             <div class="metas-form">
                 <div class="form-section">
